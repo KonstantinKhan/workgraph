@@ -5,10 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateEdgeCommand(
-    @SerialName("fromNodeId")
-    val fromNodeId: String,
-    @SerialName("toNodeId")
-    val toNodeId: String,
-    @SerialName("type")
-    val type: String
+    @SerialName("createEdge")
+    val createEdge: CreatableEdge,
 )

@@ -2,7 +2,7 @@ package com.khan366kos.workgraph.backend.domain.event
 
 import com.khan366kos.workgraph.backend.domain.actor.ActorId
 import com.khan366kos.workgraph.backend.domain.node.NodeId
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 data class Event(
     val id: EventId,
@@ -17,8 +17,8 @@ data class Event(
         val None = Event(
             id = EventId.None,
             type = EventType.CREATED,
-            eventTime = Instant.EPOCH,
-            recordedAt = Instant.EPOCH,
+            eventTime = Instant.DISTANT_PAST,
+            recordedAt = Instant.DISTANT_PAST,
             actor = ActorId.None,
             nodeIds = emptyList(),
             metadata = emptyMap()

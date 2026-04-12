@@ -4,15 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NodeDto(
+data class UpdatableNode(
     @SerialName("id")
     val id: String,
     @SerialName("type")
-    val type: String,
+    val type: String? = null,
     @SerialName("title")
-    val title: String,
+    val title: String? = null,
     @SerialName("content")
-    val content: String,
+    val content: String? = null,
     @SerialName("properties")
-    val properties: Map<String, String> = emptyMap()
+    val properties: Map<String, String>? = null
 )

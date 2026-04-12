@@ -4,7 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UpdateNodeCommand(
-    @SerialName("updateNode")
-    val updateNode: UpdatableNode
+data class ReadNodeResponseDto(
+    @SerialName("messageType")
+    val messageType: String,
+    @SerialName("readNode")
+    val readNode: NodeResponseDto
 )

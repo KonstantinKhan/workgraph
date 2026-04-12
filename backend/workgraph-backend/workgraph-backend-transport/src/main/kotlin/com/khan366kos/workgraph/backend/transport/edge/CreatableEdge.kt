@@ -4,9 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EdgeDto(
-    @SerialName("id")
-    val id: String,
+data class CreatableEdge(
     @SerialName("fromNodeId")
     val fromNodeId: String,
     @SerialName("toNodeId")

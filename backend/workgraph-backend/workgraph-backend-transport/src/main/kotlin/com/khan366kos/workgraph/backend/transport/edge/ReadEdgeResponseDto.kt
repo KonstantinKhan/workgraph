@@ -4,7 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DeleteEdgeCommand(
-    @SerialName("deleteEdgeId")
-    val deleteEdgeId: String
+data class ReadEdgeResponseDto(
+    @SerialName("messageType")
+    val messageType: String,
+    @SerialName("readEdge")
+    val readEdge: EdgeResponseDto
 )

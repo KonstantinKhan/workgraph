@@ -2,6 +2,7 @@ package com.khan366kos.workgraph.backend.transport.event
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant
 
 @Serializable
 data class ListEventsQuery(
@@ -12,9 +13,9 @@ data class ListEventsQuery(
     @SerialName("nodeId")
     val nodeId: String? = null,
     @SerialName("fromTime")
-    val fromTime: String? = null,
+    val fromTime: Instant? = null,
     @SerialName("toTime")
-    val toTime: String? = null,
+    val toTime: Instant? = null,
     @SerialName("page")
     val page: Int = 1,
     @SerialName("pageSize")

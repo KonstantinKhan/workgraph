@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateEdgeCommand(
-    @SerialName("id")
-    val id: String,
-    @SerialName("type")
-    val type: String? = null
+    @SerialName("updateEdge")
+    val updateEdge: UpdatableEdge
 )

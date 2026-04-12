@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetEdgeQuery(
-    @SerialName("id")
-    val id: String
+    @SerialName("getEdgeId")
+    val getEdgeId: String
 )

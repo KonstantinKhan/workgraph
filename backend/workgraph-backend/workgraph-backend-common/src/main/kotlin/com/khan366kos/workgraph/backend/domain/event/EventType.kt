@@ -1,5 +1,8 @@
 package com.khan366kos.workgraph.backend.domain.event
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class EventType(val value: String) {
     CREATED("created"),
     UPDATED("updated"),

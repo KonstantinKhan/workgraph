@@ -3,6 +3,9 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":workgraph-backend-common"))
+    implementation(project(":workgraph-backend-transport"))
+
     testImplementation(kotlin("test"))
 }
 

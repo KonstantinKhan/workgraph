@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetNodeQuery(
-    @SerialName("id")
-    val id: String
+    @SerialName("getNodeId")
+    val getNodeId: String
 )

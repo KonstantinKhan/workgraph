@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetEventQuery(
-    @SerialName("getEventId")
-    val getEventId: String
+data class DeleteEventCommand(
+    @SerialName("deleteEventId")
+    val deleteEventId: String
 )

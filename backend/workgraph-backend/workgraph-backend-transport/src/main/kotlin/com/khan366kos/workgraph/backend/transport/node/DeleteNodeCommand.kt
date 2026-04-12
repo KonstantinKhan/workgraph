@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeleteNodeCommand(
-    @SerialName("id")
-    val id: String
+    @SerialName("deleteNodeId")
+    val deleteNodeId: String
 )
