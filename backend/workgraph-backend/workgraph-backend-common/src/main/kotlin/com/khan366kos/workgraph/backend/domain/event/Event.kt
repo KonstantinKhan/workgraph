@@ -2,7 +2,7 @@ package com.khan366kos.workgraph.backend.domain.event
 
 import com.khan366kos.workgraph.backend.domain.actor.ActorId
 import com.khan366kos.workgraph.backend.domain.node.NodeId
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class Event(
     val id: EventId,
