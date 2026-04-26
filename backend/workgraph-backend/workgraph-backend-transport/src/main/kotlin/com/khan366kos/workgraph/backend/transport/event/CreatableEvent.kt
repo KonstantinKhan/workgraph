@@ -10,10 +10,14 @@ data class CreatableEvent(
     val type: String,
     @SerialName("eventTime")
     val eventTime: Instant,
+    @SerialName("recordedAt")
+    val recordedAt: Instant,
     @SerialName("actorId")
     val actorId: String,
     @SerialName("nodeIds")
-    val nodeIds: List<String>,
+    val nodeIds: List<String>? = null,
+    @SerialName("edgeIds")
+    val edgeIds: List<String>? = null,
     @SerialName("metadata")
-    val metadata: Map<String, String> = emptyMap()
+    val metadata: Map<String, String>? = null
 )

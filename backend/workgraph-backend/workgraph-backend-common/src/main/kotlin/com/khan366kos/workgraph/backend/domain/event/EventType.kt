@@ -3,7 +3,8 @@ package com.khan366kos.workgraph.backend.domain.event
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class EventType(val value: String) {
+enum class EventType(private val value: String) {
+    UNDEFINED("undefined"),
     CREATED("created"),
     UPDATED("updated"),
     DELETED("deleted"),

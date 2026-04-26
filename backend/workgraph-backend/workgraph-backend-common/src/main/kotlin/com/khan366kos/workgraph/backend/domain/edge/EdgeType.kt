@@ -1,6 +1,7 @@
 package com.khan366kos.workgraph.backend.domain.edge
 
 enum class EdgeType(val value: String) {
+    EMPTY("empty"),
     REFERENCES("references"),
     DEPENDS_ON("depends_on"),
     RELATES_TO("relates_to"),
@@ -8,6 +9,4 @@ enum class EdgeType(val value: String) {
     DUPLICATES("duplicates"),
     PART_OF("part_of"),
     CUSTOM("custom");
-
-    fun asString(): String = value
 }

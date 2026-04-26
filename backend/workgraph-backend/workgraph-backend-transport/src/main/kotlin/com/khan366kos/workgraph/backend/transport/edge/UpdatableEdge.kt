@@ -8,9 +8,9 @@ data class UpdatableEdge(
     @SerialName("id")
     val id: String,
     @SerialName("fromNodeId")
-    val fromNodeId: String,
+    val fromNodeId: String? = null,
     @SerialName("toNodeId")
-    val toNodeId: String,
+    val toNodeId: String? = null,
     @SerialName("type")
     val type: String? = null,
 )

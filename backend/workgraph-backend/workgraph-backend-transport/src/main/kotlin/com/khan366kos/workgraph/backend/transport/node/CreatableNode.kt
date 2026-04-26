@@ -10,7 +10,7 @@ data class CreatableNode(
     @SerialName("title")
     val title: String,
     @SerialName("content")
-    val content: String = "",
+    val content: String? = null,
     @SerialName("properties")
-    val properties: Map<String, String> = emptyMap()
+    val properties: Map<String, String>? = null
 )

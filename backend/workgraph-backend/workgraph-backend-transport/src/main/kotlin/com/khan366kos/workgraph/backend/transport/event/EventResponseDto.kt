@@ -18,6 +18,8 @@ data class EventResponseDto(
     val actorId: String,
     @SerialName("nodeIds")
     val nodeIds: List<String>,
+    @SerialName("edgeIds")
+    val edgeIds: List<String>,
     @SerialName("metadata")
-    val metadata: Map<String, String> = emptyMap()
+    val metadata: Map<String, String>
 )

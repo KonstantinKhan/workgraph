@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ListEdgesQuery(
+    @SerialName("getEdgeIds")
+    val getEdgeIds: List<String>? = null,
     @SerialName("nodeId")
     val nodeId: String? = null,
     @SerialName("type")

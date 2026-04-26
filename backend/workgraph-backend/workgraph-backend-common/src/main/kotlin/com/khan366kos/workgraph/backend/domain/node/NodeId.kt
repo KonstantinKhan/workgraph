@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @JvmInline
-value class NodeId(val value: String) {
+value class NodeId(private val value: String) {
     fun asString(): String = value
 
     companion object {
