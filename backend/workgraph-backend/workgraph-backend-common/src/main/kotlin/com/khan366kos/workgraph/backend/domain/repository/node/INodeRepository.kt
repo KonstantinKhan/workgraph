@@ -1,9 +1,9 @@
 package com.khan366kos.workgraph.backend.domain.repository.node
 
 interface INodeRepository {
-    suspend fun create(request: DbNodeRequest): DbNodeResponse
-    suspend fun read(request: DbNodeIdRequest): DbNodeResponse
-    suspend fun update(request: DbNodeRequest): DbNodeResponse
-    suspend fun delete(request: DbNodeIdRequest): DbNodeResponse
-    suspend fun search(request: DbNodeFilterRequest): DbNodesResponse
+    suspend fun create(request: DbNodeRequest): NodeRepoResult
+    suspend fun read(request: DbNodeIdRequest): NodeRepoResult
+    suspend fun update(request: DbNodeRequest): NodeRepoResult
+    suspend fun delete(request: DbNodeIdRequest): NodeRepoResult
+    suspend fun search(request: DbNodeFilterRequest): NodeRepoResult
 }
