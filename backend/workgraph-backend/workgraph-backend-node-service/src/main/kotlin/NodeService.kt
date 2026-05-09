@@ -1,47 +1,50 @@
 import com.khan366kos.workgraph.backend.domain.AppContext
-import com.khan366kos.workgraph.backend.domain.node.NodeId
+import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
+import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class NodeService {
-    @OptIn(ExperimentalUuidApi::class)
-    fun createNode(context: AppContext): Unit {
+class NodeService(private val nodeRepository: INodeRepository) {
 
-        context.apply {
-            responseNode = requestNode.copy(
-                id = NodeId(nodeId()),
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun createNode(context: AppContext): Unit {
+
+        with(context) {
+            nodeRepository.create(
+                DbNodeRequest(
+                    node = requestNode
+                )
             )
         }
-    }
 
-    @OptIn(ExperimentalUuidApi::class)
-    fun readNode(context: AppContext): Unit {
+        @OptIn(ExperimentalUuidApi::class)
+        fun readNode(context: AppContext): Unit {
 
-        context.apply {
+            context.apply {
 
-        }
-    }
-
-    fun updateNode(context: AppContext): Unit {
-        context.apply {
-            responseNode = requestNode
-        }
-    }
-
-    fun deleteNode(context: AppContext): Unit {
-        context.apply {
-
+            }
         }
 
-    }
+        fun updateNode(context: AppContext): Unit {
+            context.apply {
+                responseNode = requestNode
+            }
+        }
 
-    fun searchNode(context: AppContext) {
-        context.apply {
+        fun deleteNode(context: AppContext): Unit {
+            context.apply {
+
+            }
 
         }
+
+        fun searchNode(context: AppContext) {
+            context.apply {
+
+            }
+        }
+
+        @OptIn(ExperimentalUuidApi::class)
+        private fun nodeId(): Uuid = Uuid.random()
+
     }
-
-    @OptIn(ExperimentalUuidApi::class)
-    private fun nodeId(): Uuid = Uuid.random()
-
-}
