@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
 data class CreateNodeCommand(
     @SerialName("createNode")
     val createNode: CreatableNode
-)
+) : INodeRequest

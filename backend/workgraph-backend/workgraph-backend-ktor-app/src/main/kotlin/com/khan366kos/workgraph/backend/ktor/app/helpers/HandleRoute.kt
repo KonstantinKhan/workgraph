@@ -1,0 +1,29 @@
+package com.khan366kos.workgraph.backend.ktor.app.helpers
+
+import com.khan366kos.workgraph.backend.domain.AppContext
+import com.khan366kos.workgraph.backend.mapping.domain2transport.toDto
+import com.khan366kos.workgraph.backend.transport.node.CreateNodeCommand
+import com.khan366kos.workgraph.backend.transport.node.INodeRequest
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+
+suspend inline fun <reified T : INodeRequest> ApplicationCall.handleRoute(
+    crossinline block: suspend AppContext.(T) -> Unit
+) {
+    val context: AppContext = AppContext()
+    when (val request = receive<T>()) {
+        is CreateNodeCommand -> {
+            context.block(request)
+        }
+    }
+    respond(context.responseNode.toDto())
+}
+
+suspend inline fun ApplicationCall.handleParams(
+    crossinline block: suspend AppContext.() -> Unit
+) {
+    val context: AppContext = AppContext()
+    context.block()
+    respond(context.responseNode.toDto())
+}

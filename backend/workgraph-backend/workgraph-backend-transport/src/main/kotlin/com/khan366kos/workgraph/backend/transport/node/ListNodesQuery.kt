@@ -11,4 +11,4 @@ data class ListNodesQuery(
     val page: Int = 1,
     @SerialName("pageSize")
     val pageSize: Int = 20
-)
+): INodeRequest

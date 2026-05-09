@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
 data class GetNodeQuery(
     @SerialName("getNodeId")
     val getNodeId: String
-)
+): INodeRequest

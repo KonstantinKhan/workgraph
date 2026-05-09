@@ -22,6 +22,8 @@ dependencies {
     implementation(projects.workgraphBackendTransport)
     implementation(projects.workgraphBackendMapping)
 
+    implementation(projects.workgraphBackendNodeService)
+
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }

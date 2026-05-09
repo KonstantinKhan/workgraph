@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
 data class UpdateNodeCommand(
     @SerialName("updateNode")
     val updateNode: UpdatableNode
-)
+): INodeRequest
