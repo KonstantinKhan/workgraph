@@ -1,4 +1,5 @@
 import com.khan366kos.workgraph.backend.domain.AppContext
+import com.khan366kos.workgraph.backend.domain.exceptions.NodeOperationFailedException
 import com.khan366kos.workgraph.backend.domain.node.Node
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
@@ -11,10 +12,10 @@ class NodeService(
 ) {
     @OptIn(ExperimentalUuidApi::class)
     suspend fun createNode(context: AppContext): Node =
-        when(val result = nodeRepo.create(DbNodeRequest(context.requestNode))) {
+        when (val result = nodeRepo.create(DbNodeRequest(context.requestNode))) {
             is NodeRepoResult.Single -> result.node
-            is NodeRepoResult.DbError -> throw result.cause
-            else -> throw RuntimeException("Unexpected result")
+            is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
+            else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
         }
 
 
