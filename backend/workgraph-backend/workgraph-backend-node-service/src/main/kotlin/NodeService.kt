@@ -2,6 +2,7 @@ import com.khan366kos.workgraph.backend.domain.AppContext
 import com.khan366kos.workgraph.backend.domain.exceptions.NodeNotFoundException
 import com.khan366kos.workgraph.backend.domain.exceptions.NodeOperationFailedException
 import com.khan366kos.workgraph.backend.domain.node.Node
+import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
@@ -20,47 +21,37 @@ class NodeService(
             else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
         }
 
-
-    suspend fun readNode(context: AppContext) {
-        context.apply {
-            when (val result = nodeRepo.read(DbNodeIdRequest(nodeId))) {
-                is NodeRepoResult.Single -> responseNode = result.node
-                is NodeRepoResult.NotFound -> throw NodeNotFoundException(nodeId)
-                is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
-                else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
-            }
+    suspend fun readNode(context: AppContext): Node =
+        when (val result = nodeRepo.read(DbNodeIdRequest(context.nodeId))) {
+            is NodeRepoResult.Single -> result.node
+            is NodeRepoResult.NotFound -> throw NodeNotFoundException(context.nodeId)
+            is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
+            else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
         }
-    }
 
-    suspend fun updateNode(context: AppContext) {
-        context.apply {
-            when (val result = nodeRepo.update(DbNodeRequest(requestNode))) {
-                is NodeRepoResult.Single -> responseNode = result.node
-                is NodeRepoResult.NotFound -> throw NodeNotFoundException(requestNode.id)
-                is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
-                else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
-            }
+    suspend fun updateNode(context: AppContext): Node =
+        when (val result = nodeRepo.update(DbNodeRequest(context.requestNode))) {
+            is NodeRepoResult.Single -> result.node
+            is NodeRepoResult.NotFound -> throw NodeNotFoundException(context.requestNode.id)
+            is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
+            else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
         }
-    }
 
-    suspend fun deleteNode(context: AppContext) {
-        context.apply {
-            when (val result = nodeRepo.delete(DbNodeIdRequest(nodeId))) {
-                is NodeRepoResult.Single -> responseNode = result.node
-                is NodeRepoResult.NotFound -> throw NodeNotFoundException(nodeId)
-                is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
-                else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
-            }
+    suspend fun deleteNode(context: AppContext): Node =
+        when (val result = nodeRepo.delete(DbNodeIdRequest(context.nodeId))) {
+            is NodeRepoResult.Single -> result.node
+            is NodeRepoResult.NotFound -> throw NodeNotFoundException(context.nodeId)
+            is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
+            else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
         }
-    }
 
-    fun searchNode(context: AppContext) {
-        context.apply {
-
+    suspend fun searchNode(context: AppContext): List<Node> =
+        when (val result = nodeRepo.search(DbNodeFilterRequest(context.requestNode.type))) {
+            is NodeRepoResult.Multiple -> result.nodes
+            is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
+            else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
         }
-    }
 
     @OptIn(ExperimentalUuidApi::class)
     private fun nodeId(): Uuid = Uuid.random()
-
 }
