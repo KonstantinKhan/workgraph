@@ -6,6 +6,7 @@ import kotlin.uuid.Uuid
 class NodeService {
     @OptIn(ExperimentalUuidApi::class)
     fun createNode(context: AppContext): Unit {
+
         context.apply {
             responseNode = requestNode.copy(
                 id = NodeId(nodeId()),
