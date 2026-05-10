@@ -6,5 +6,6 @@ sealed class NodeRepoResult {
     data class Single(val node: Node) : NodeRepoResult()
     data class Multiple(val nodes: List<Node>) : NodeRepoResult()
     data object NotFound : NodeRepoResult()
+    data object AlreadyExists : NodeRepoResult()
     data class DbError(val cause: Throwable) : NodeRepoResult()
 }

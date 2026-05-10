@@ -10,7 +10,7 @@ fun AppContext.setCommand(command: CreateNodeCommand) = apply {
 }
 
 fun AppContext.setQuery(query: NodeId) = apply {
-    nodeId = nodeId
+    nodeId = query
 }
 
 fun AppContext.setCommand(command: UpdateNodeCommand) = apply {

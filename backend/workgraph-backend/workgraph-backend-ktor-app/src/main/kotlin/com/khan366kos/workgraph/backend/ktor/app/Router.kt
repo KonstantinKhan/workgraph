@@ -21,14 +21,14 @@ fun Routing.node(
     post("create") {
         call.handleRoute<CreateNodeCommand>() { request ->
             this.setCommand(request)
-            nodeService.createNode(this)
+            this.responseNode = nodeService.createNode(this)
         }
     }
 
     get("{nodeId}") {
         call.handleParams() {
             this.setQuery(NodeId(call.parameters["nodeId"]!!))
-            nodeService.readNode(this)
+            this.responseNode = nodeService.readNode(this)
         }
     }
 

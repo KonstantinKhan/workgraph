@@ -23,6 +23,8 @@ dependencies {
     implementation(projects.workgraphBackendMapping)
 
     implementation(projects.workgraphBackendNodeService)
+    implementation(projects.workgraphBackendNeo4j)
+    implementation(libs.neo4j)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
