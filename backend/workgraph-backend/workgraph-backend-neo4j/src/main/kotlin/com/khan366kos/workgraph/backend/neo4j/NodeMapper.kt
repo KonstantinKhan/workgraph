@@ -13,7 +13,7 @@ internal fun org.neo4j.driver.types.Node.toDomain(): Node {
         .associate { it.removePrefix("prop_") to get(it).asString() }
 
     return Node(
-        id = NodeId(elementId()),
+        id = NodeId(get("id").asString()),
         type = NodeType.valueOf(get("type").asString()),
         title = NodeTitle(get("title").asString()),
         content = NodeContent(get("content").asString()),

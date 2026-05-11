@@ -4,6 +4,8 @@ import com.khan366kos.workgraph.backend.domain.AppContext
 import com.khan366kos.workgraph.backend.mapping.domain2transport.toDto
 import com.khan366kos.workgraph.backend.transport.node.CreateNodeCommand
 import com.khan366kos.workgraph.backend.transport.node.INodeRequest
+import com.khan366kos.workgraph.backend.transport.node.ListNodesQuery
+import com.khan366kos.workgraph.backend.transport.node.UpdateNodeCommand
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -15,9 +17,19 @@ suspend inline fun <reified T : INodeRequest> ApplicationCall.handleRoute(
     when (val request = receive<T>()) {
         is CreateNodeCommand -> {
             context.block(request)
+            respond(context.responseNode.toDto())
+        }
+
+        is UpdateNodeCommand -> {
+            context.block(request)
+            respond(context.responseNode.toDto())
+        }
+
+        is ListNodesQuery -> {
+            context.block(request)
+            respond(context.responseNodes.map { it.toDto() })
         }
     }
-    respond(context.responseNode.toDto())
 }
 
 suspend inline fun ApplicationCall.handleParams(

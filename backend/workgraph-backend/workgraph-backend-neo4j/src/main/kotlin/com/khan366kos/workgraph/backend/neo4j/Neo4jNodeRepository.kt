@@ -8,6 +8,8 @@ import com.khan366kos.workgraph.backend.domain.repository.node.NodeRepoResult
 import org.neo4j.driver.Driver
 import org.neo4j.driver.SessionConfig
 import org.neo4j.driver.exceptions.NoSuchRecordException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class Neo4jNodeRepository(
     private val driver: Driver,
@@ -20,8 +22,8 @@ class Neo4jNodeRepository(
         withSession(openSession()) { session ->
             session.executeWrite { tx ->
                 tx.run(
-                    $$"CREATE (n:Node) SET n = $props RETURN n",
-                    mapOf("props" to request.node.toNeo4jParams())
+                    $$"CREATE (n:Node) SET n = $props, n.id = $id RETURN n",
+                    mapOf("id" to id(), "props" to request.node.toNeo4jParams()),
                 ).single().get("n").asNode().toDomain()
             }
         }.fold(
@@ -50,12 +52,13 @@ class Neo4jNodeRepository(
             val node = request.node
             session.executeWrite { tx ->
                 tx.run(
-                    $$"MATCH (n:Node) WHERE elementId(n) = $id SET n = $props RETURN n",
+                    $$"MATCH (n:Node) WHERE n.id = $id SET n += $props RETURN n",
                     mapOf("id" to node.id.asString(), "props" to node.toNeo4jParams())
                 ).single().get("n").asNode().toDomain()
             }
         }.fold(
-            onSuccess = { NodeRepoResult.Single(it) },
+            onSuccess = {
+                NodeRepoResult.Single(it) },
             onFailure = { cause ->
                 if (cause is NoSuchRecordException) NodeRepoResult.NotFound
                 else NodeRepoResult.DbError(cause)
@@ -67,11 +70,11 @@ class Neo4jNodeRepository(
             session.executeWrite { tx ->
                 val id = request.nodeId.asString()
                 val domainNode = tx.run(
-                    $$"MATCH (n:Node) WHERE elementId(n) = $id RETURN n",
+                    $$"MATCH (n:Node) WHERE n.id = $id RETURN n",
                     mapOf("id" to id)
                 ).single().get("n").asNode().toDomain()
                 tx.run(
-                    $$"MATCH (n:Node) WHERE elementId(n) = $id DETACH DELETE n",
+                    $$"MATCH (n:Node) WHERE n.id = $id DETACH DELETE n",
                     mapOf("id" to id)
                 ).consume()
                 domainNode
@@ -86,6 +89,7 @@ class Neo4jNodeRepository(
 
     override suspend fun search(request: DbNodeFilterRequest): NodeRepoResult =
         withSession(openSession()) { session ->
+            println("request: ${request.nodeType}")
             session.executeRead { tx ->
                 tx.run(
                     $$"MATCH (n:Node {type: $type}) RETURN n",
@@ -93,7 +97,12 @@ class Neo4jNodeRepository(
                 ).list { it.get("n").asNode().toDomain() }
             }
         }.fold(
-            onSuccess = { NodeRepoResult.Multiple(it) },
+            onSuccess = {
+                println("result: $it")
+                NodeRepoResult.Multiple(it) },
             onFailure = { NodeRepoResult.DbError(it) }
         )
 }
+
+@OptIn(ExperimentalUuidApi::class)
+private fun id() = Uuid.random().toString()

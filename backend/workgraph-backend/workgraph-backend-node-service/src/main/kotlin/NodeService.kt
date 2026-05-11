@@ -46,7 +46,7 @@ class NodeService(
         }
 
     suspend fun searchNode(context: AppContext): List<Node> =
-        when (val result = nodeRepo.search(DbNodeFilterRequest(context.requestNode.type))) {
+        when (val result = nodeRepo.search(DbNodeFilterRequest(context.nodeType))) {
             is NodeRepoResult.Multiple -> result.nodes
             is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
             else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
