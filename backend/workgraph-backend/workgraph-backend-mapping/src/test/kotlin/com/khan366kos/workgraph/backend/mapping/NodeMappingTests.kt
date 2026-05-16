@@ -27,7 +27,7 @@ class NodeMappingTests : FunSpec({
         with(domainNode) {
             id shouldBe NodeId.None
             type shouldBe NodeType.TASK
-            title shouldBe NodeTitle("Test task nodes")
+            title shouldBe NodeTitle("Test task node")
             content shouldBe NodeContent("Some content")
             properties shouldBe NodeProperties(mapOf("key1" to "value1", "key2" to "value2"))
         }

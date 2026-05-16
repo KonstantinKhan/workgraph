@@ -1,12 +1,15 @@
 import com.khan366kos.workgraph.backend.domain.AppContext
+import com.khan366kos.workgraph.backend.domain.edge.Edge
 import com.khan366kos.workgraph.backend.domain.exceptions.NodeNotFoundException
 import com.khan366kos.workgraph.backend.domain.exceptions.NodeOperationFailedException
 import com.khan366kos.workgraph.backend.domain.node.Node
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
+import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeWithParentRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
 import com.khan366kos.workgraph.backend.domain.repository.node.NodeRepoResult
+import com.khan366kos.workgraph.backend.domain.repository.node.NodeWithEdgeRepoResult
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -50,6 +53,15 @@ class NodeService(
             is NodeRepoResult.Multiple -> result.nodes
             is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
             else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
+        }
+
+    suspend fun createChildNode(context: AppContext): Pair<Node, Edge> =
+        when (val result = nodeRepo.createWithParent(
+            DbNodeWithParentRequest(context.requestNode, context.parentNodeId, context.requestEdgeType)
+        )) {
+            is NodeWithEdgeRepoResult.Created -> result.node to result.edge
+            is NodeWithEdgeRepoResult.ParentNotFound -> throw NodeNotFoundException(context.parentNodeId)
+            is NodeWithEdgeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
         }
 
     @OptIn(ExperimentalUuidApi::class)

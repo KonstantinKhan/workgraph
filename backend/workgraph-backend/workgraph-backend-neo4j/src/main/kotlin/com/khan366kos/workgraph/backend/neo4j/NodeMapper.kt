@@ -1,5 +1,8 @@
 package com.khan366kos.workgraph.backend.neo4j
 
+import com.khan366kos.workgraph.backend.domain.edge.Edge
+import com.khan366kos.workgraph.backend.domain.edge.EdgeId
+import com.khan366kos.workgraph.backend.domain.edge.EdgeType
 import com.khan366kos.workgraph.backend.domain.node.Node
 import com.khan366kos.workgraph.backend.domain.node.NodeContent
 import com.khan366kos.workgraph.backend.domain.node.NodeId
@@ -30,3 +33,11 @@ internal fun Node.toNeo4jParams(): Map<String, Any> {
     properties.asMap().forEach { (k, v) -> params["prop_$k"] = v }
     return params
 }
+
+internal fun org.neo4j.driver.types.Relationship.toDomain(fromNode: NodeId, toNode: NodeId): Edge =
+    Edge(
+        id = EdgeId(get("id").asString()),
+        fromNode = fromNode,
+        toNode = toNode,
+        type = EdgeType.valueOf(type())
+    )

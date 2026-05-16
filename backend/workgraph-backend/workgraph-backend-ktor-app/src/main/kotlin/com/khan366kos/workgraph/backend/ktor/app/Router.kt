@@ -6,6 +6,7 @@ import com.khan366kos.workgraph.backend.ktor.app.helpers.handleRoute
 import com.khan366kos.workgraph.backend.ktor.app.helpers.handleParams
 import com.khan366kos.workgraph.backend.mapping.transport2domain.setCommand
 import com.khan366kos.workgraph.backend.mapping.transport2domain.setQuery
+import com.khan366kos.workgraph.backend.transport.node.CreateChildNodeCommand
 import com.khan366kos.workgraph.backend.transport.node.CreateNodeCommand
 import com.khan366kos.workgraph.backend.transport.node.ListNodesQuery
 import com.khan366kos.workgraph.backend.transport.node.UpdateNodeCommand
@@ -24,6 +25,15 @@ fun Routing.node(
         call.handleRoute<CreateNodeCommand>() { request ->
             this.setCommand(request)
             this.responseNode = nodeService.createNode(this)
+        }
+    }
+
+    post("create-child") {
+        call.handleRoute<CreateChildNodeCommand> { request ->
+            this.setCommand(request)
+            val (node, edge) = nodeService.createChildNode(this)
+            this.responseNode = node
+            this.responseEdge = edge
         }
     }
 

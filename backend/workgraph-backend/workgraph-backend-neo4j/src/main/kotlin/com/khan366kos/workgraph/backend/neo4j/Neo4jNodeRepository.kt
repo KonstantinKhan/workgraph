@@ -3,8 +3,10 @@ package com.khan366kos.workgraph.backend.neo4j
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
+import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeWithParentRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
 import com.khan366kos.workgraph.backend.domain.repository.node.NodeRepoResult
+import com.khan366kos.workgraph.backend.domain.repository.node.NodeWithEdgeRepoResult
 import org.neo4j.driver.Driver
 import org.neo4j.driver.SessionConfig
 import org.neo4j.driver.exceptions.NoSuchRecordException
@@ -17,6 +19,40 @@ class Neo4jNodeRepository(
 ) : INodeRepository {
 
     private fun openSession() = driver.session(SessionConfig.forDatabase(database))
+
+    override suspend fun createWithParent(request: DbNodeWithParentRequest): NodeWithEdgeRepoResult =
+        withSession(openSession()) { session ->
+            session.executeWrite { tx ->
+                val childId = id()
+                val edgeId = id()
+                val row = tx.run(
+                    $$"""
+                    MATCH (parent:Node {id: $parentId})
+                    CREATE (child:Node) SET child = $childProps, child.id = $childId
+                    CREATE (parent)-[r:$${request.edgeType.name} {id: $edgeId}]->(child)
+                    RETURN child, r
+                    """.trimIndent(),
+                    mapOf(
+                        "parentId" to request.parentNodeId.asString(),
+                        "childId" to childId,
+                        "childProps" to request.node.toNeo4jParams(),
+                        "edgeId" to edgeId
+                    )
+                ).single()
+                val childNode = row.get("child").asNode().toDomain()
+                val edge = row.get("r").asRelationship().toDomain(
+                    fromNode = request.parentNodeId,
+                    toNode = childNode.id
+                )
+                Pair(childNode, edge)
+            }
+        }.fold(
+            onSuccess = { (node, edge) -> NodeWithEdgeRepoResult.Created(node, edge) },
+            onFailure = { cause ->
+                if (cause is NoSuchRecordException) NodeWithEdgeRepoResult.ParentNotFound
+                else NodeWithEdgeRepoResult.DbError(cause)
+            }
+        )
 
     override suspend fun create(request: DbNodeRequest): NodeRepoResult =
         withSession(openSession()) { session ->
