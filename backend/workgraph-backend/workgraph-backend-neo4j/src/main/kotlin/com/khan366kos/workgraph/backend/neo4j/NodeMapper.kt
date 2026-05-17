@@ -26,7 +26,7 @@ internal fun org.neo4j.driver.types.Node.toDomain(): Node {
 
 internal fun Node.toNeo4jParams(): Map<String, Any> {
     val params = mutableMapOf<String, Any>(
-        "type" to type.name,
+        "type" to (type.takeIf { it != NodeType.EMPTY }?.name ?: this.type.name),
         "title" to title.asString(),
         "content" to content.asString()
     )

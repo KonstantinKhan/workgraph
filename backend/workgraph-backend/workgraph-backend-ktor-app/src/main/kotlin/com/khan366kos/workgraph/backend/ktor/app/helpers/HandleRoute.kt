@@ -32,6 +32,7 @@ suspend inline fun <reified T : INodeRequest> ApplicationCall.handleRoute(
         }
 
         is UpdateNodeCommand -> {
+            println("request: $request")
             context.block(request)
             respond(context.responseNode.toDto())
         }

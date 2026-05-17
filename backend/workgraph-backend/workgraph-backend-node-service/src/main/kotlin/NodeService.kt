@@ -1,8 +1,10 @@
 import com.khan366kos.workgraph.backend.domain.AppContext
 import com.khan366kos.workgraph.backend.domain.edge.Edge
+import com.khan366kos.workgraph.backend.domain.edge.EdgeType
 import com.khan366kos.workgraph.backend.domain.exceptions.NodeNotFoundException
 import com.khan366kos.workgraph.backend.domain.exceptions.NodeOperationFailedException
 import com.khan366kos.workgraph.backend.domain.node.Node
+import com.khan366kos.workgraph.backend.domain.node.NodeType
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
@@ -63,6 +65,16 @@ class NodeService(
             is NodeWithEdgeRepoResult.ParentNotFound -> throw NodeNotFoundException(context.parentNodeId)
             is NodeWithEdgeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
         }
+
+    suspend fun searchTaskNodes(): List<Node> =
+        when (val result = nodeRepo.search(DbNodeFilterRequest(NodeType.TASK))) {
+            is NodeRepoResult.Multiple -> result.nodes
+            is NodeRepoResult.DbError -> throw NodeOperationFailedException(result.cause)
+            else -> throw NodeOperationFailedException(RuntimeException("Unexpected result"))
+        }
+
+    suspend fun searchTaskChildEdges(): List<Edge> =
+        nodeRepo.searchEdges(NodeType.TASK, EdgeType.HAS_CHILD)
 
     @OptIn(ExperimentalUuidApi::class)
     private fun nodeId(): Uuid = Uuid.random()

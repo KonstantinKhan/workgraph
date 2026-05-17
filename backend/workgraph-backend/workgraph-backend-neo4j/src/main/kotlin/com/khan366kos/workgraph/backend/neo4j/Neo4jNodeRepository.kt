@@ -1,5 +1,9 @@
 package com.khan366kos.workgraph.backend.neo4j
 
+import com.khan366kos.workgraph.backend.domain.edge.Edge
+import com.khan366kos.workgraph.backend.domain.edge.EdgeType
+import com.khan366kos.workgraph.backend.domain.node.NodeId
+import com.khan366kos.workgraph.backend.domain.node.NodeType
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
@@ -86,6 +90,7 @@ class Neo4jNodeRepository(
     override suspend fun update(request: DbNodeRequest): NodeRepoResult =
         withSession(openSession()) { session ->
             val node = request.node
+            println("current node: $node")
             session.executeWrite { tx ->
                 tx.run(
                     $$"MATCH (n:Node) WHERE n.id = $id SET n += $props RETURN n",
@@ -94,6 +99,7 @@ class Neo4jNodeRepository(
             }
         }.fold(
             onSuccess = {
+                println("Updated node: $it")
                 NodeRepoResult.Single(it) },
             onFailure = { cause ->
                 if (cause is NoSuchRecordException) NodeRepoResult.NotFound
@@ -116,7 +122,8 @@ class Neo4jNodeRepository(
                 domainNode
             }
         }.fold(
-            onSuccess = { NodeRepoResult.Single(it) },
+            onSuccess = {
+                NodeRepoResult.Single(it) },
             onFailure = { cause ->
                 if (cause is NoSuchRecordException) NodeRepoResult.NotFound
                 else NodeRepoResult.DbError(cause)
@@ -125,7 +132,6 @@ class Neo4jNodeRepository(
 
     override suspend fun search(request: DbNodeFilterRequest): NodeRepoResult =
         withSession(openSession()) { session ->
-            println("request: ${request.nodeType}")
             session.executeRead { tx ->
                 tx.run(
                     $$"MATCH (n:Node {type: $type}) RETURN n",
@@ -134,10 +140,28 @@ class Neo4jNodeRepository(
             }
         }.fold(
             onSuccess = {
-                println("result: $it")
                 NodeRepoResult.Multiple(it) },
             onFailure = { NodeRepoResult.DbError(it) }
         )
+
+    override suspend fun searchEdges(nodeType: NodeType, edgeType: EdgeType): List<Edge> =
+        withSession(openSession()) { session ->
+            session.executeRead { tx ->
+                tx.run(
+                    $$"""
+                    MATCH (p:Node {type: $nodeType})-[r]->(c:Node {type: $nodeType})
+                    WHERE type(r) = $edgeType
+                    RETURN r, p.id as fromNodeId, c.id as toNodeId
+                    """.trimIndent(),
+                    mapOf("nodeType" to nodeType.name, "edgeType" to edgeType.name)
+                ).list { record ->
+                    record.get("r").asRelationship().toDomain(
+                        fromNode = NodeId(record.get("fromNodeId").asString()),
+                        toNode = NodeId(record.get("toNodeId").asString())
+                    )
+                }
+            }
+        }.getOrElse { emptyList() }
 }
 
 @OptIn(ExperimentalUuidApi::class)
