@@ -7,7 +7,7 @@ import com.khan366kos.workgraph.backend.domain.node.NodeType
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
-import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeWithParentRequest
+import com.khan366kos.workgraph.backend.domain.repository.node.DbChildNodeRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
 import com.khan366kos.workgraph.backend.domain.repository.node.NodeRepoResult
 import com.khan366kos.workgraph.backend.domain.repository.node.NodeWithEdgeRepoResult
@@ -24,7 +24,7 @@ class Neo4jNodeRepository(
 
     private fun openSession() = driver.session(SessionConfig.forDatabase(database))
 
-    override suspend fun createWithParent(request: DbNodeWithParentRequest): NodeWithEdgeRepoResult =
+    override suspend fun createChild(request: DbChildNodeRequest): NodeWithEdgeRepoResult =
         withSession(openSession()) { session ->
             session.executeWrite { tx ->
                 val childId = id()

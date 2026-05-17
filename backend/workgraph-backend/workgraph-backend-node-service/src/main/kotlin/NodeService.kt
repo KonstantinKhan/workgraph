@@ -8,7 +8,7 @@ import com.khan366kos.workgraph.backend.domain.node.NodeType
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeFilterRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeIdRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeRequest
-import com.khan366kos.workgraph.backend.domain.repository.node.DbNodeWithParentRequest
+import com.khan366kos.workgraph.backend.domain.repository.node.DbChildNodeRequest
 import com.khan366kos.workgraph.backend.domain.repository.node.INodeRepository
 import com.khan366kos.workgraph.backend.domain.repository.node.NodeRepoResult
 import com.khan366kos.workgraph.backend.domain.repository.node.NodeWithEdgeRepoResult
@@ -58,8 +58,8 @@ class NodeService(
         }
 
     suspend fun createChildNode(context: AppContext): Pair<Node, Edge> =
-        when (val result = nodeRepo.createWithParent(
-            DbNodeWithParentRequest(context.requestNode, context.parentNodeId, context.requestEdgeType)
+        when (val result = nodeRepo.createChild(
+            DbChildNodeRequest(context.requestNode, context.parentNodeId, context.requestEdgeType)
         )) {
             is NodeWithEdgeRepoResult.Created -> result.node to result.edge
             is NodeWithEdgeRepoResult.ParentNotFound -> throw NodeNotFoundException(context.parentNodeId)
